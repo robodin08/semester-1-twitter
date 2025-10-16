@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "Preserve",
+        "rewriteRelativeImportExtensions": true,
+        // "erasableSyntaxOnly": true,
+        "verbatimModuleSyntax": true,
+        "outDir": "dist",
+        "rootDir": "src",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "resolveJsonModule": true,
+        "removeComments": true,
+        "importHelpers": true,
+        // "sourceMap": true,
+        // "strict": true,
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
