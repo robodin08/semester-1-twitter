@@ -1,58 +1,87 @@
 import express, { Router } from "express";
 
-import { createUser, loginUser } from "../controllers/users";
+import { createUser, loginUser } from "../services/users";
 import isLoggedIn, { type UserRequest } from "../middleware/authMiddleware";
 import { revokeRefreshToken, refreshAccessToken } from "../utils/sessionTokens";
-import HttpError from "../utils/HttpError";
+import { validateBody, createZodSchema, type SchemaType } from "../utils/bodyValidator";
 
 const router = Router();
 
 router.use(express.json());
 
-router.post("/create", async (req, res) => {
-  const user = await createUser(req.body);
+const createUserScheme = createZodSchema("username", "email", "password");
+type CreateUserInput = SchemaType<typeof createUserScheme>;
 
-  console.log(user);
+router.post(
+  "/create",
+  validateBody(createUserScheme),
+  async (req: UserRequest<CreateUserInput>, res) => {
+    const { username, email, password } = req.body;
 
-  res.status(200).json({
-    success: true,
-  });
-});
+    const user = await createUser(username, email, password);
 
-router.post("/login", async (req, res) => {
-  const { accessToken, refreshToken } = await loginUser(req.body);
+    console.log(user);
 
-  res.status(200).json({
-    success: true,
-    accessToken,
-    refreshToken,
-  });
-});
+    res.status(200).json({
+      success: true,
+    });
+  },
+);
 
-router.post("/refresh", async (req, res) => {
-  const { refreshToken } = req.body;
+const loginUserScheme = createZodSchema("identifier", "password");
+type LoginUserInput = SchemaType<typeof loginUserScheme>;
 
-  if (!refreshToken) throw new HttpError("Empty input fields.", 400);
+router.post(
+  "/login",
+  validateBody(loginUserScheme),
+  async (req: UserRequest<LoginUserInput>, res) => {
+    const { identifier, password } = req.body;
 
-  const accessToken = await refreshAccessToken(refreshToken);
+    const { accessToken, refreshToken } = await loginUser(identifier, password);
 
-  res.status(200).json({
-    success: true,
-    accessToken,
-  });
-});
+    res.status(200).json({
+      success: true,
+      accessToken,
+      refreshToken,
+    });
+  },
+);
 
-router.post("/logout", isLoggedIn(), async (req: UserRequest, res) => {
-  const { refreshToken } = req.body;
+const refreshUserScheme = createZodSchema("refreshToken");
+type RefreshUserInput = SchemaType<typeof refreshUserScheme>;
 
-  if (!refreshToken) throw new HttpError("Empty input fields.", 400);
+router.post(
+  "/refresh",
+  validateBody(refreshUserScheme),
+  async (req: UserRequest<RefreshUserInput>, res) => {
+    const { refreshToken } = req.body;
 
-  await revokeRefreshToken(req.user.id, refreshToken);
+    const accessToken = await refreshAccessToken(refreshToken);
 
-  res.status(200).json({
-    success: true,
-  });
-});
+    res.status(200).json({
+      success: true,
+      accessToken,
+    });
+  },
+);
+
+const logoutUserScheme = createZodSchema("refreshToken");
+type LogoutUserInput = SchemaType<typeof logoutUserScheme>;
+
+router.post(
+  "/logout",
+  isLoggedIn(),
+  validateBody(logoutUserScheme),
+  async (req: UserRequest<LogoutUserInput>, res) => {
+    const { refreshToken } = req.body;
+
+    await revokeRefreshToken(req.user.id, refreshToken);
+
+    res.status(200).json({
+      success: true,
+    });
+  },
+);
 
 router.post(
   "/info",

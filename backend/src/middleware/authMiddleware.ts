@@ -5,7 +5,12 @@ import { verifyAccessToken } from "../utils/sessionTokens";
 import { User, userRepository } from "../database/datasource";
 import type { FindOneOptions } from "typeorm";
 
-export interface UserRequest extends Request {
+export interface UserRequest<
+  // P = {},
+  // ResBody = {},
+  ReqBody = any,
+  // ReqQuery = {}
+> extends Request<{}, {}, ReqBody, {}> {
   user: User;
 }
 

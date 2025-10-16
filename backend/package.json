@@ -50,6 +50,7 @@
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.27",
     "validator": "^13.15.15",
+    "zod": "^4.1.12",
     "zxcvbn": "^4.4.2"
   },
   "prettier": {

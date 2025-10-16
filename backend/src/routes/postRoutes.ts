@@ -1,30 +1,52 @@
-import express, { Router } from "express";
+import express, { Router, type Response } from "express";
+import z from "zod";
 
 import isLoggedIn, { type UserRequest } from "../middleware/authMiddleware";
-import { createPost, ratePost } from "../controllers/posts";
+import { createPost, ratePost } from "../services/posts";
+import { validateBody, createZodSchema, type SchemaType } from "../utils/bodyValidator";
 
 const router = Router();
 
 router.use(express.json());
 
-router.post("/create", isLoggedIn(), async (req: UserRequest, res) => {
-  const post = await createPost(req.user.id, req.body);
+const createPostSchema = createZodSchema("message");
+type CreatePostInput = SchemaType<typeof createPostSchema>;
 
-  console.log(post);
+router.post(
+  "/create",
+  isLoggedIn(),
+  validateBody(createPostSchema),
+  async (req: UserRequest<CreatePostInput>, res: Response) => {
+    const { message } = req.body;
 
-  res.status(200).json({
-    success: true,
-    id: post.id,
-  });
-});
+    const post = await createPost(req.user.id, message);
 
-router.post("/rate", isLoggedIn(), async (req: UserRequest, res) => {
-  const newState = await ratePost(req.user.id, req.body);
+    console.log(post);
 
-  res.status(200).json({
-    success: true,
-    newState,
-  });
-});
+    res.status(200).json({
+      success: true,
+      id: post.id,
+    });
+  },
+);
+
+const ratePostSchema = createZodSchema("postId", "action");
+type RatePostInput = z.infer<typeof ratePostSchema>;
+
+router.post(
+  "/rate",
+  isLoggedIn(),
+  validateBody(ratePostSchema),
+  async (req: UserRequest<RatePostInput>, res) => {
+    const { postId, action } = req.body;
+
+    const newState = await ratePost(req.user.id, postId, action);
+
+    res.status(200).json({
+      success: true,
+      newState,
+    });
+  },
+);
 
 export default router;

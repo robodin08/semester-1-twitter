@@ -27,8 +27,8 @@ const config = {
   session: {
     jwtSecret: getEnv("JWT_SECRET", null),
     jwtRefreshSecret: getEnv("JWT_REFRESH_SECRET", null),
-    accessTokenTTL: isDevelopment ? "1h" : "15m",
-    refreshTokenTTL: isDevelopment ? "1d" : "3d", // means that you get logged out when you dont use the app in 3 days
+    accessTokenTTL: isDevelopment ? "1d" : "15m",
+    refreshTokenTTL: isDevelopment ? "30d" : "30d",
   },
   morgan: isDevelopment ? "dev" : "combined",
   isDevelopment,
