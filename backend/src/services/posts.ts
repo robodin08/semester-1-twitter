@@ -2,12 +2,12 @@ import validator from "validator";
 
 import { AppDataSource, Post, PostAction, postRepository } from "../database/datasource";
 
-import HttpError from "../utils/HttpError";
+import RequestError from "../utils/RequestError";
 import { PostActionType } from "../database/entities/PostAction";
 
 export async function createPost(userId: number, message: string): Promise<Post> {
   if (!validator.isLength(message, { min: 5, max: 500 }))
-    throw new HttpError("Message must be between 5 and 500 characters.", 400);
+    throw new RequestError("INVALID_MESSAGE_LENGTH");
 
   const post = await postRepository.save({
     user: { id: userId },

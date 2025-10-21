@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import ms from "ms";
 
 import { sessionRepository } from "../database/datasource.ts";
-import HttpError from "./HttpError";
+import RequestError from "./RequestError.ts";
 import config from "../config.ts";
 
 const ACCESS_SECRET = config.session.jwtSecret;
@@ -67,7 +67,7 @@ export async function generateTokens(userId: number): Promise<{
 
 export async function refreshAccessToken(refreshToken: string): Promise<string> {
   const payload = verifyToken(refreshToken, REFRESH_SECRET);
-  if (!payload) throw new HttpError("Invalid refresh token.", 401);
+  if (!payload) throw new RequestError("INVALID_REFRESH_TOKEN");
 
   const hashedToken = hashString(refreshToken);
 
@@ -84,7 +84,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
     },
   });
 
-  if (!token) throw new HttpError("Invalid or revoked refresh token.", 401);
+  if (!token) throw new RequestError("INVALID_REFRESH_TOKEN");
 
   const createdAtTime = token.createdAt.getTime();
   const refreshTTLms = ms(REFRESH_TTL);
@@ -94,15 +94,13 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
     token.revoked = true;
     token.revokedAt = new Date();
     await sessionRepository.save(token);
-    throw new HttpError("Refresh token is expired.", 401);
+    throw new RequestError("INVALID_REFRESH_TOKEN");
   }
 
   const lastRefreshedTime = token.lastRefreshed.getTime();
   const earliestNextRefresh = Date.now() - ms(ACCESS_TTL);
 
-  if (lastRefreshedTime > earliestNextRefresh) {
-    throw new HttpError("Cannot generate a new token until the old one is expired.", 429);
-  }
+  if (lastRefreshedTime > earliestNextRefresh) throw new RequestError("TOO_EARLY_TOKEN_REFRESH");
 
   token.lastRefreshed = new Date();
   await sessionRepository.save(token);
@@ -116,9 +114,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
 
 export async function revokeRefreshToken(userId: number, refreshToken: string) {
   const payload = verifyToken(refreshToken, REFRESH_SECRET);
-  if (!payload || userId !== payload.id) {
-    throw new HttpError("Invalid refresh token.", 401);
-  }
+  if (!payload || userId !== payload.id) throw new RequestError("INVALID_REFRESH_TOKEN");
 
   const hashedToken = hashString(refreshToken);
 

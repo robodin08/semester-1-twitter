@@ -6,7 +6,7 @@ import { validateUsername, validatePassword, validateEmail } from "../utils/vali
 import { generateTokens } from "../utils/sessionTokens.ts";
 
 import config from "../config.ts";
-import HttpError from "../utils/HttpError.ts";
+import RequestError from "../utils/RequestError.ts";
 
 const bcryptSaltRounds = config.isDevelopment ? 5 : 15;
 
@@ -22,12 +22,12 @@ export async function createUser(
   const emailExists = await userRepository.exists({
     where: { email: email },
   });
-  if (emailExists) throw new HttpError("Email already in use.", 409);
+  if (emailExists) throw new RequestError("EMAIL_IN_USE");
 
   const usernameExists = await userRepository.exists({
     where: { username: username },
   });
-  if (usernameExists) throw new HttpError("Username already in use.", 409);
+  if (usernameExists) throw new RequestError("USERNAME_IN_USE");
 
   const hashedPassword = await bcrypt.hash(password, bcryptSaltRounds);
 
@@ -53,9 +53,7 @@ export async function loginUser(
 
   const isMatch = user ? await bcrypt.compare(password.trim(), user.password) : false;
 
-  if (!user || !isMatch) {
-    throw new HttpError("Invalid credentials.", 401);
-  }
+  if (!user || !isMatch) throw new RequestError("INVALID_CREDENTIALS");
 
   return await generateTokens(user.id);
 }

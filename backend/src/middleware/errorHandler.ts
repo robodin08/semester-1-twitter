@@ -1,35 +1,48 @@
 import type { NextFunction, Response, Request } from "express";
-
-import HttpError from "../utils/HttpError";
 import { ZodError } from "zod";
 
+import RequestError, { statusToDescription } from "../utils/RequestError";
+import config from "../config";
+
 export function notFoundHandler(req: Request, res: Response, next: NextFunction) {
-  next(new HttpError("Page not found", 404));
+  next(new RequestError("PAGE_NOT_FOUND"));
 }
 
 export function errorHandler(
-  err: ZodError | HttpError | Error,
+  err: ZodError | RequestError | Error,
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   if (err instanceof ZodError) {
+    const messages = err.issues.map((issue) => {
+      const path = issue.path.length ? issue.path.join(".") : "input";
+      return `${path}: ${issue.message}`;
+    });
+
     res.status(500).json({
       success: false,
-      status: 500,
-      message: `${err.issues[0].path}: ${err.issues[0].message}`,
+      status: 400,
+      description: statusToDescription(500),
+      message: messages.join("; "),
+      type: "VALIDATION_ERROR",
     });
-  } else if (err instanceof HttpError) {
+  } else if (err instanceof RequestError) {
     res.status(err.status).json({
       success: false,
       status: err.status,
+      description: err.description,
       message: err.message,
+      type: err.type,
     });
   } else {
+    const { message, status } = config.errorMessages.INTERNAL_SERVER_ERROR;
     res.status(500).json({
       success: false,
-      status: 500,
-      message: err.message,
+      status: status,
+      description: statusToDescription(500),
+      message: message,
+      type: "INTERNAL_SERVER_ERROR",
     });
   }
 }

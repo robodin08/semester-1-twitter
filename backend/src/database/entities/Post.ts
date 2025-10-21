@@ -3,9 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  ManyToMany,
   CreateDateColumn,
-  JoinTable,
   OneToMany,
 } from "typeorm";
 import { PostAction } from "./PostAction";

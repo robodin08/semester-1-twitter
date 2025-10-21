@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 
+import errorMessages from "./errorMessages";
+
 dotenv.config({ quiet: true });
 
 function getEnv(key: string, fallback?: string): string {
@@ -32,7 +34,8 @@ const config = {
   },
   morgan: isDevelopment ? "dev" : "combined",
   isDevelopment,
+  errorMessages,
   nodeEnv,
-} as const;
+};
 
 export default config;
