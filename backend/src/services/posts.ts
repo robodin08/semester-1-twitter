@@ -1,9 +1,9 @@
 import validator from "validator";
 
-import { AppDataSource, Post, PostAction, postRepository } from "../database/datasource";
+import { AppDataSource, Post, PostAction, postRepository } from "@datasource";
+import { PostActionType } from "@entities/PostAction";
 
-import RequestError from "../utils/RequestError";
-import { PostActionType } from "../database/entities/PostAction";
+import RequestError from "@RequestError";
 
 export async function createPost(userId: number, message: string): Promise<Post> {
   if (!validator.isLength(message, { min: 5, max: 500 }))
@@ -48,6 +48,7 @@ export async function ratePost(
       where: { id: postId },
       lock: { mode: "pessimistic_write" },
     });
+    if (!post) return null;
 
     let newAction = null;
 

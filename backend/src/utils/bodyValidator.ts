@@ -1,7 +1,9 @@
-import z from "zod";
-
-import { PostActionType } from "../database/entities/PostAction";
 import type { NextFunction, Request, Response } from "express";
+import { z } from "zod";
+
+import { PostActionType } from "@entities/PostAction";
+
+import RequestError from "@RequestError";
 
 const fieldValidators = {
   username: z.string().trim().nonempty(),
@@ -19,7 +21,7 @@ export type SchemaType<T extends ReturnType<typeof createZodSchema>> = T extends
   : never;
 
 export function createZodSchema<T extends readonly (keyof typeof fieldValidators)[]>(...fields: T) {
-  const schema = z.object(
+  const schema = z.strictObject(
     Object.fromEntries(fields.map((f) => [f, fieldValidators[f]])) as {
       [K in T[number]]: (typeof fieldValidators)[K];
     },
@@ -29,7 +31,19 @@ export function createZodSchema<T extends readonly (keyof typeof fieldValidators
 
 export function validateBody<T extends z.ZodTypeAny>(schema: T) {
   return (req: Request, res: Response, next: NextFunction) => {
-    req.body = schema.parse(req.body);
-    next();
+    try {
+      console.log(req.body);
+      req.body = schema.parse(req.body);
+      next();
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const message = err.issues
+          .map((i) => `${i.path.length ? i.path.join(".") : "input"}: ${i.message}`)
+          .join("; ");
+
+        return next(new RequestError("INVALID_VALIDATION", { message }));
+      }
+      next(err);
+    }
   };
 }

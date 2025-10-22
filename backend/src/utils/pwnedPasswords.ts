@@ -39,7 +39,7 @@ async function fetchRange(prefix: string, options: { padding?: boolean } = {}): 
     }
     return await res.text();
   } catch (err) {
-    if (err.name === "AbortError") {
+    if (err instanceof Error && err.name === "AbortError") {
       throw new Error("PwnedPasswords API timeout");
     }
     throw err;

@@ -1,31 +1,31 @@
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, OneToMany } from "typeorm";
-import { Session } from "./Session";
-import { Post } from "./Post";
-import { PostAction } from "./PostAction";
+import { Session } from "@entities/Session";
+import { Post } from "@entities/Post";
+import { PostAction } from "@entities/PostAction";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "varchar" })
-  username: string;
+  username!: string;
 
   @Column({ type: "varchar", unique: true })
-  email: string;
+  email!: string;
 
   @Column({ type: "varchar" })
-  password: string;
+  password!: string;
 
   @OneToMany(() => Session, (session) => session.user)
-  sessions: Session[];
+  sessions?: Session[];
 
   @OneToMany(() => Post, (post) => post.user)
-  posts: Post[];
+  posts?: Post[];
 
   @OneToMany(() => PostAction, (postActions) => postActions.user)
-  postActions: PostAction[];
+  postActions?: PostAction[];
 
   @CreateDateColumn({ type: "timestamp", precision: 0 })
-  createdAt: Date;
+  createdAt!: Date;
 }

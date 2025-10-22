@@ -1,21 +1,52 @@
 {
     "compilerOptions": {
-        "target": "esnext",
-        "module": "Preserve",
-        "rewriteRelativeImportExtensions": true,
-        // "erasableSyntaxOnly": true,
-        "verbatimModuleSyntax": true,
-        "outDir": "dist",
-        "rootDir": "src",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "esModuleInterop": true,
+        "target": "es2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "outDir": "dist", // compiled JS output
+        "rootDir": "src", // source folder
+        "esModuleInterop": true, // allow import of CommonJS modules
+        "rewriteRelativeImportExtensions": true, // rewrites .ts -> .js in dist
+        "forceConsistentCasingInFileNames": true,
+        // "sourceMap": true,
+        "strict": true, // strict type checking
+        "noEmitOnError": true,
         "isolatedModules": true,
-        "resolveJsonModule": true,
         "removeComments": true,
         "importHelpers": true,
-        // "sourceMap": true,
-        // "strict": true,
+        "verbatimModuleSyntax": true, // keep TS import/export syntax
+        "experimentalDecorators": true, // required by TypeORM
+        "emitDecoratorMetadata": true, // required by TypeORM
+        "baseUrl": "src",
+        "paths": {
+            "@entities/*": [
+                "database/entities/*.ts"
+            ],
+            "@middleware/*": [
+                "middleware/*.ts"
+            ],
+            "@routes/*": [
+                "routes/*.ts"
+            ],
+            "@services/*": [
+                "services/*.ts"
+            ],
+            "@utils/*": [
+                "utils/*.ts"
+            ],
+            "@datasource": [
+                "database/datasource.ts"
+            ],
+            "@config": [
+                "config.ts"
+            ],
+            "@RequestError": [
+                "utils/RequestError.ts"
+            ],
+            "@/*": [
+                "*.ts"
+            ]
+        }
     },
     "include": [
         "src/**/*"

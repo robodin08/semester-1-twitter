@@ -2,15 +2,11 @@ import validator from "validator";
 import zxcvbn from "zxcvbn";
 import fs from "node:fs/promises";
 
-import pwnedCount from "./pwnedPasswords";
-// import HttpError from "./HttpError";
-import RequestError from "./RequestError";
+import pwnedCount from "@utils/pwnedPasswords";
+import RequestError from "@RequestError";
 
-// https://raw.githubusercontent.com/disposable/disposable-email-domains/master/domains_strict_mx.txt
 const DISPOSABLE_FILE = "src/data/domains.txt";
 let disposableSet: Set<string> | null = null;
-
-export type IdentifierType = "email" | "username";
 
 async function loadDisposableDomains(): Promise<void> {
   if (disposableSet) return;
@@ -19,6 +15,7 @@ async function loadDisposableDomains(): Promise<void> {
   disposableSet = new Set(
     text
       .split(/\r?\n/)
+      .slice(2)
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean),
   );

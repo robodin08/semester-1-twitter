@@ -1,7 +1,7 @@
-import { initializeAppDataSource } from "./database/datasource";
-import app from "./app";
+import { initializeAppDataSource } from "@datasource";
+import app from "@/app";
 
-import config from "./config.ts";
+import config from "@config";
 
 async function startServer(): Promise<void> {
   try {

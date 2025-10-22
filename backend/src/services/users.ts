@@ -1,12 +1,12 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
 
-import { userRepository, User } from "../database/datasource.ts";
-import { validateUsername, validatePassword, validateEmail } from "../utils/validator.ts";
-import { generateTokens } from "../utils/sessionTokens.ts";
+import { userRepository, User } from "@datasource";
+import { validateUsername, validatePassword, validateEmail } from "@utils/validators";
+import { generateTokens } from "@utils/sessionTokens";
 
-import config from "../config.ts";
-import RequestError from "../utils/RequestError.ts";
+import RequestError from "@RequestError";
+import config from "@config";
 
 const bcryptSaltRounds = config.isDevelopment ? 5 : 15;
 

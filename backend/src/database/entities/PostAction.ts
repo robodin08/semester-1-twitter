@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
   Index,
 } from "typeorm";
-import { User } from "./User";
-import { Post } from "./Post";
+import { User } from "@entities/User";
+import { Post } from "@entities/Post";
 
 export enum PostActionType {
   BOOST = "BOOST",
@@ -18,17 +18,17 @@ export enum PostActionType {
 @Index(["user", "post"], { unique: true })
 export class PostAction {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "enum", enum: PostActionType })
-  action: string;
+  action!: string;
 
   @ManyToOne(() => User, (u) => u.postActions, { onDelete: "CASCADE" })
-  user: User;
+  user?: User;
 
   @ManyToOne(() => Post, (p) => p.postActions, { onDelete: "CASCADE" })
-  post: Post;
+  post?: Post;
 
   @CreateDateColumn({ type: "timestamp", precision: 0 })
-  createdAt: Date;
+  createdAt!: Date;
 }

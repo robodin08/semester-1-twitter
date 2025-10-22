@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 
-import config from "../config.ts";
+import { User } from "@entities/User";
+import { Session } from "@entities/Session";
+import { Post } from "@entities/Post";
+import { PostAction } from "@entities/PostAction";
 
-import { User } from "./entities/User";
-import { Session } from "./entities/Session";
-import { Post } from "./entities/Post";
-import { PostAction } from "./entities/PostAction.ts";
+import config from "@config";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

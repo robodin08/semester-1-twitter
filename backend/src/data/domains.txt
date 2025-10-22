@@ -1,3 +1,5 @@
+https://raw.githubusercontent.com/disposable/disposable-email-domains/master/domains_strict_mx.txt
+
 0-30-24.com
 0-mail.com
 00.pe

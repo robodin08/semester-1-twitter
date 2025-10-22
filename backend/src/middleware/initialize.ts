@@ -1,7 +1,7 @@
 import { Router } from "express";
 import morgan from "morgan";
 
-import config from "../config.ts";
+import config from "@config";
 
 const router = Router();
 

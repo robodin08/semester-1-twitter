@@ -1,17 +1,19 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
-
-import RequestError from "../utils//RequestError";
-import { verifyAccessToken } from "../utils/sessionTokens";
-import { User, userRepository } from "../database/datasource";
 import type { FindOneOptions } from "typeorm";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type core from "express-serve-static-core";
+
+import { verifyAccessToken } from "@utils/sessionTokens";
+import { User, userRepository } from "@datasource";
+import RequestError from "@RequestError";
 
 export interface UserRequest<
-  // P = {},
-  // ResBody = {},
+  // Params = core.ParamsDictionary,
+  // ResBody = any,
   ReqBody = any,
-  // ReqQuery = {}
-> extends Request<{}, {}, ReqBody, {}> {
-  user: User;
+  // ReqQuery = core.Query,
+  // Locals extends Record<string, any> = Record<string, any>,
+> extends Request<core.ParamsDictionary, any, ReqBody, core.Query> {
+  user?: User;
 }
 
 export default function isLoggedIn(options?: FindOneOptions<User>): RequestHandler {
@@ -29,8 +31,8 @@ export default function isLoggedIn(options?: FindOneOptions<User>): RequestHandl
     if (options) {
       const user = await userRepository.findOne({
         ...options,
-        where: { ...(options.where || {}), id: payload.id },
-        select: { ...(options.select || {}), id: true },
+        where: { id: payload.id, ...(options.where || {}) },
+        select: { id: true, ...(options.select || {}) },
       });
 
       if (!user) throw new RequestError("USER_NOT_FOUND");

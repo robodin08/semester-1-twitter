@@ -1,21 +1,26 @@
 import dotenv from "dotenv";
+import ms from "ms";
 
-import errorMessages from "./errorMessages";
-
-dotenv.config({ quiet: true });
+dotenv.config();
 
 function getEnv(key: string, fallback?: string): string {
   const value = process.env[key];
-  if (value === undefined || value === "") {
-    if (fallback !== undefined) return fallback;
+
+  if (fallback !== undefined) {
+    return value ?? fallback;
+  } else if (value === undefined) {
     throw new Error(`Missing required environment variable: ${key}`);
   }
+
   return value;
 }
 
 const nodeEnv = getEnv("NODE_ENV", "development");
-
 const isDevelopment = nodeEnv === "development";
+
+function ttl(value: string): ms.StringValue {
+  return value as ms.StringValue;
+}
 
 const config = {
   port: Number(getEnv("PORT", "3000")),
@@ -23,19 +28,18 @@ const config = {
     host: getEnv("DATABASE_HOST", "localhost"),
     port: Number(getEnv("DATABASE_PORT", "5432")),
     username: getEnv("DATABASE_USER", "postgres"),
-    password: getEnv("DATABASE_PASSWORD", ""),
+    password: getEnv("DATABASE_PASSWORD"),
     name: getEnv("DATABASE_NAME", "postgres"),
   },
   session: {
-    jwtSecret: getEnv("JWT_SECRET", null),
-    jwtRefreshSecret: getEnv("JWT_REFRESH_SECRET", null),
-    accessTokenTTL: isDevelopment ? "1d" : "15m",
-    refreshTokenTTL: isDevelopment ? "30d" : "30d",
+    jwtSecret: getEnv("JWT_SECRET"),
+    jwtRefreshSecret: getEnv("JWT_REFRESH_SECRET"),
+    accessTokenTTL: ttl(isDevelopment ? "1d" : "15m"),
+    refreshTokenTTL: ttl(isDevelopment ? "30d" : "30d"),
   },
   morgan: isDevelopment ? "dev" : "combined",
   isDevelopment,
-  errorMessages,
   nodeEnv,
-};
+} as const;
 
 export default config;

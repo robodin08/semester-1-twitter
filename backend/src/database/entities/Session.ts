@@ -6,28 +6,28 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "./User";
+import { User } from "@entities/User";
 
 @Entity()
 export class Session {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "varchar" })
-  refreshToken: string;
+  refreshToken!: string;
 
   @UpdateDateColumn({ type: "timestamp", precision: 0 })
-  lastRefreshed: Date;
+  lastRefreshed!: Date;
 
   @Column({ type: "boolean", default: false })
-  revoked: boolean;
+  revoked!: boolean;
 
   @UpdateDateColumn({ type: "timestamp", precision: 0, nullable: true })
-  revokedAt: Date;
+  revokedAt!: Date;
 
   @ManyToOne(() => User, (user) => user.sessions, { onDelete: "CASCADE" })
-  user: User;
+  user?: User;
 
   @CreateDateColumn({ type: "timestamp", precision: 0 })
-  createdAt: Date;
+  createdAt!: Date;
 }

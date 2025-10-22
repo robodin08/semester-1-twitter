@@ -1,9 +1,9 @@
 import express, { Router } from "express";
 
-import { createUser, loginUser } from "../services/users";
-import isLoggedIn, { type UserRequest } from "../middleware/authMiddleware";
-import { revokeRefreshToken, refreshAccessToken } from "../utils/sessionTokens";
-import { validateBody, createZodSchema, type SchemaType } from "../utils/bodyValidator";
+import { createUser, loginUser } from "@services/users";
+import isLoggedIn, { type UserRequest } from "@middleware/authMiddleware";
+import { revokeRefreshToken, refreshAccessToken } from "@utils/sessionTokens";
+import { validateBody, createZodSchema, type SchemaType } from "@utils/bodyValidator";
 
 const router = Router();
 
@@ -39,6 +39,8 @@ router.post(
 
     const { accessToken, refreshToken } = await loginUser(identifier, password);
 
+    console.log(req.body);
+
     res.status(200).json({
       success: true,
       accessToken,
@@ -73,6 +75,8 @@ router.post(
   isLoggedIn(),
   validateBody(logoutUserScheme),
   async (req: UserRequest<LogoutUserInput>, res) => {
+    if (!req.user) return; // typescript safty
+
     const { refreshToken } = req.body;
 
     await revokeRefreshToken(req.user.id, refreshToken);

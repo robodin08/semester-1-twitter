@@ -2,15 +2,19 @@ import jwt, { type JwtPayload, type SignOptions, type VerifyOptions } from "json
 import crypto from "node:crypto";
 import ms from "ms";
 
-import { sessionRepository } from "../database/datasource.ts";
-import RequestError from "./RequestError.ts";
-import config from "../config.ts";
+import { sessionRepository } from "@datasource";
+
+import RequestError from "@RequestError";
+import config from "@config";
 
 const ACCESS_SECRET = config.session.jwtSecret;
 const REFRESH_SECRET = config.session.jwtRefreshSecret;
 
 const ACCESS_TTL = config.session.accessTokenTTL;
 const REFRESH_TTL = config.session.refreshTokenTTL;
+
+const accessTTLMs = ms(ACCESS_TTL);
+const REFRESHTTLMs = ms(REFRESH_TTL);
 
 const ISSUER = "twitter-mini";
 
@@ -26,7 +30,7 @@ function hashString(string: string) {
   return crypto.createHash("sha256").update(string).digest("hex");
 }
 
-function verifyToken(token: string, secret: string, options?: VerifyOptions): TokenPayload {
+function verifyToken(token: string, secret: string, options?: VerifyOptions): TokenPayload | null {
   try {
     const decoded = jwt.verify(token, secret, {
       issuer: ISSUER,
@@ -38,7 +42,7 @@ function verifyToken(token: string, secret: string, options?: VerifyOptions): To
   }
 }
 
-export function verifyAccessToken(accessToken: string): TokenPayload {
+export function verifyAccessToken(accessToken: string): TokenPayload | null {
   return verifyToken(accessToken, ACCESS_SECRET);
 }
 
@@ -87,7 +91,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
   if (!token) throw new RequestError("INVALID_REFRESH_TOKEN");
 
   const createdAtTime = token.createdAt.getTime();
-  const refreshTTLms = ms(REFRESH_TTL);
+  const refreshTTLms = REFRESHTTLMs;
   const expireAt = createdAtTime + refreshTTLms;
 
   if (Date.now() > expireAt) {
@@ -98,7 +102,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
   }
 
   const lastRefreshedTime = token.lastRefreshed.getTime();
-  const earliestNextRefresh = Date.now() - ms(ACCESS_TTL);
+  const earliestNextRefresh = Date.now() - accessTTLMs;
 
   if (lastRefreshedTime > earliestNextRefresh) throw new RequestError("TOO_EARLY_TOKEN_REFRESH");
 
@@ -129,7 +133,7 @@ export async function revokeRefreshToken(userId: number, refreshToken: string) {
 
   if (!token) return;
 
-  const expireAt = token.createdAt.getTime() + ms(REFRESH_TTL);
+  const expireAt = token.createdAt.getTime() + REFRESHTTLMs;
   if (Date.now() > expireAt) return;
 
   token.revoked = true;

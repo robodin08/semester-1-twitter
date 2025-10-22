@@ -1,9 +1,9 @@
 import express, { Router, type Response } from "express";
 import z from "zod";
 
-import isLoggedIn, { type UserRequest } from "../middleware/authMiddleware";
-import { createPost, ratePost } from "../services/posts";
-import { validateBody, createZodSchema, type SchemaType } from "../utils/bodyValidator";
+import isLoggedIn, { type UserRequest } from "@middleware/authMiddleware";
+import { createPost, ratePost } from "@services/posts";
+import { validateBody, createZodSchema, type SchemaType } from "@utils/bodyValidator";
 
 const router = Router();
 
@@ -17,6 +17,8 @@ router.post(
   isLoggedIn(),
   validateBody(createPostSchema),
   async (req: UserRequest<CreatePostInput>, res: Response) => {
+    if (!req.user) return; // typescript safty
+
     const { message } = req.body;
 
     const post = await createPost(req.user.id, message);
@@ -38,6 +40,8 @@ router.post(
   isLoggedIn(),
   validateBody(ratePostSchema),
   async (req: UserRequest<RatePostInput>, res) => {
+    if (!req.user) return; // typescript safty
+
     const { postId, action } = req.body;
 
     const newState = await ratePost(req.user.id, postId, action);

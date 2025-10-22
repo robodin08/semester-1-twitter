@@ -1,4 +1,9 @@
-const errorMessages = {
+interface ErrorDefinitionScheme {
+  message: string;
+  status: number;
+}
+
+const errorDefinitions: Record<string, ErrorDefinitionScheme> = {
   // Validation errors
   INVALID_EMAIL: { message: "Email address is invalid.", status: 400 },
   UNSAFE_EMAIL: { message: "Email provider is not allowed or is disposable.", status: 400 },
@@ -21,6 +26,7 @@ const errorMessages = {
   USERNAME_IN_USE: { message: "Username is already in use.", status: 409 },
 
   // Authentication / authorization
+  INVALID_VALIDATION: { message: "", status: 400 },
   INVALID_CREDENTIALS: { message: "Invalid credentials.", status: 401 },
   INVALID_REFRESH_TOKEN: { message: "Refresh token expired or invalid.", status: 401 },
   TOO_EARLY_TOKEN_REFRESH: {
@@ -39,6 +45,10 @@ const errorMessages = {
     message: "An unexpected error occurred. Please try again later.",
     status: 500,
   },
-};
+} as const;
 
-export default errorMessages;
+export type ErrorDefinitions = typeof errorDefinitions;
+export type ErrorType = keyof ErrorDefinitions;
+export type ErrorDefinition<T extends ErrorType = ErrorType> = ErrorDefinitions[T];
+
+export default errorDefinitions;

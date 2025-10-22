@@ -1,8 +1,8 @@
 import express from "express";
 
-import middleware from "./middleware/initialize";
-import routes from "./routes/initialize";
-import { notFoundHandler, errorHandler } from "./middleware/errorHandler";
+import middleware from "@middleware/initialize";
+import routes from "@routes/initialize";
+import { notFoundHandler, errorHandler } from "@middleware/errorHandler";
 
 const app = express();
 
