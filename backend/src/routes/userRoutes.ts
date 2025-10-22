@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 
 import { createUser, loginUser } from "@services/users";
-import isLoggedIn, { type UserRequest } from "@middleware/authMiddleware";
+import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
 import { revokeRefreshToken, refreshAccessToken } from "@utils/sessionTokens";
 import { validateBody, createZodSchema, type SchemaType } from "@utils/bodyValidator";
 
@@ -72,7 +72,7 @@ type LogoutUserInput = SchemaType<typeof logoutUserScheme>;
 
 router.post(
   "/logout",
-  isLoggedIn(),
+  isAuthenticated(),
   validateBody(logoutUserScheme),
   async (req: UserRequest<LogoutUserInput>, res) => {
     if (!req.user) return; // typescript safty
@@ -89,7 +89,7 @@ router.post(
 
 router.post(
   "/info",
-  isLoggedIn({ select: { id: true, email: true, username: true } }),
+  isAuthenticated({ select: { id: true, email: true, username: true } }),
   async (req: UserRequest, res) => {
     console.log(req.user);
 

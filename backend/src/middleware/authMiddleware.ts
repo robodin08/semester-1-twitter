@@ -16,7 +16,7 @@ export interface UserRequest<
   user?: User;
 }
 
-export default function isLoggedIn(options?: FindOneOptions<User>): RequestHandler {
+export default function isAuthenticated(options?: FindOneOptions<User>): RequestHandler {
   return async (req: UserRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) throw new RequestError("MISSING_AUTH_HEADER");

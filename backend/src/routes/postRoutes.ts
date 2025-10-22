@@ -1,7 +1,7 @@
 import express, { Router, type Response } from "express";
 import z from "zod";
 
-import isLoggedIn, { type UserRequest } from "@middleware/authMiddleware";
+import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
 import { createPost, ratePost } from "@services/posts";
 import { validateBody, createZodSchema, type SchemaType } from "@utils/bodyValidator";
 
@@ -14,7 +14,7 @@ type CreatePostInput = SchemaType<typeof createPostSchema>;
 
 router.post(
   "/create",
-  isLoggedIn(),
+  isAuthenticated(),
   validateBody(createPostSchema),
   async (req: UserRequest<CreatePostInput>, res: Response) => {
     if (!req.user) return; // typescript safty
@@ -37,7 +37,7 @@ type RatePostInput = z.infer<typeof ratePostSchema>;
 
 router.post(
   "/rate",
-  isLoggedIn(),
+  isAuthenticated(),
   validateBody(ratePostSchema),
   async (req: UserRequest<RatePostInput>, res) => {
     if (!req.user) return; // typescript safty

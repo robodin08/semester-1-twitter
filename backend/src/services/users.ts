@@ -1,4 +1,3 @@
-import validator from "validator";
 import bcrypt from "bcrypt";
 
 import { userRepository, User } from "@datasource";
@@ -47,7 +46,7 @@ export async function loginUser(
   password: string,
 ): Promise<{ accessToken: string; refreshToken: string }> {
   const user = await userRepository.findOne({
-    where: validator.isEmail(identifier) ? { email: identifier } : { username: identifier },
+    where: [{ email: identifier }, { username: identifier }],
     select: { id: true, password: true },
   });
 
