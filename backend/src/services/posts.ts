@@ -7,7 +7,7 @@ import RequestError from "@RequestError";
 
 export async function createPost(userId: number, message: string): Promise<Post> {
   if (!validator.isLength(message, { min: 5, max: 500 }))
-    throw new RequestError("INVALID_MESSAGE_LENGTH");
+    throw new RequestError("INVALID_MESSAGE_LENGTH", { placeholders: { min: 5, max: 500 } });
 
   const post = await postRepository.save({
     user: { id: userId },

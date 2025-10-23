@@ -1,16 +1,10 @@
-interface ErrorDefinitionScheme {
-  message: string;
-  status: number;
-}
-
-const errorDefinitions: Record<string, ErrorDefinitionScheme> = {
+const errorDefinitions = {
   // Validation errors
   INVALID_EMAIL: { message: "Email address is invalid.", status: 400 },
   UNSAFE_EMAIL: { message: "Email provider is not allowed or is disposable.", status: 400 },
   INVALID_USERNAME: { message: "Username is not valid.", status: 400 },
   INVALID_PASSWORD: {
-    message:
-      "Password is invalid. It must include upper and lowercase letters, numbers, and special characters.",
+    message: "Password is invalid. {reason}",
     status: 400,
   },
   WEAK_PASSWORD: { message: "Password is too weak. Use a stronger one.", status: 400 },
@@ -18,7 +12,10 @@ const errorDefinitions: Record<string, ErrorDefinitionScheme> = {
     message: "Password has appeared in data breaches. Choose a different one.",
     status: 400,
   },
-  INVALID_MESSAGE_LENGTH: { message: "Message must be between 5 and 500 characters.", status: 400 },
+  INVALID_MESSAGE_LENGTH: {
+    message: "Message must be between {min} and {max} characters.",
+    status: 400,
+  },
   INVALID_AUTH_FORMAT: { message: "Authorization header format is invalid.", status: 400 },
 
   // Already in use
@@ -26,7 +23,7 @@ const errorDefinitions: Record<string, ErrorDefinitionScheme> = {
   USERNAME_IN_USE: { message: "Username is already in use.", status: 409 },
 
   // Authentication / authorization
-  INVALID_VALIDATION: { message: "", status: 400 },
+  INVALID_VALIDATION: { message: "Invalid validation.", status: 400 },
   INVALID_CREDENTIALS: { message: "Invalid credentials.", status: 401 },
   INVALID_REFRESH_TOKEN: { message: "Refresh token expired or invalid.", status: 401 },
   TOO_EARLY_TOKEN_REFRESH: {
@@ -46,9 +43,5 @@ const errorDefinitions: Record<string, ErrorDefinitionScheme> = {
     status: 500,
   },
 } as const;
-
-export type ErrorDefinitions = typeof errorDefinitions;
-export type ErrorType = keyof ErrorDefinitions;
-export type ErrorDefinition<T extends ErrorType = ErrorType> = ErrorDefinitions[T];
 
 export default errorDefinitions;

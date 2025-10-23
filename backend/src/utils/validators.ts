@@ -39,7 +39,12 @@ export async function validatePassword(password: string) {
     validator.matches(password, /[0-9]/) &&
     validator.matches(password, /[!@#$%^&*]/);
 
-  if (!isValid) throw new RequestError("INVALID_PASSWORD");
+  if (!isValid)
+    throw new RequestError("INVALID_PASSWORD", {
+      placeholders: {
+        reason: "It must include upper and lowercase letters, numbers, and special characters.",
+      },
+    });
 
   const score = zxcvbn(password).score;
   if (score < 2) throw new RequestError("WEAK_PASSWORD");
