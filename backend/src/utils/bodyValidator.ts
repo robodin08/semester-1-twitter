@@ -37,11 +37,12 @@ export function validateBody<T extends z.ZodTypeAny>(schema: T) {
       next();
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const message = err.issues
-          .map((i) => `${i.path.length ? i.path.join(".") : "input"}: ${i.message}`)
-          .join("; ");
+        const messages = err.issues.map((issue) => {
+          const path = issue.path.length ? issue.path.join(".") : "input";
+          return `${path}: ${issue.message}`;
+        });
 
-        return next(new RequestError("INVALID_VALIDATION", { message }));
+        return next(new RequestError("INVALID_VALIDATION", { message: messages.join("; ") }));
       }
       next(err);
     }

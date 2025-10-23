@@ -13,7 +13,9 @@ type PlaceholdersForError<T extends ErrorType> = {
   [K in ExtractPlaceholders<ErrorDefinitions[T]["message"]>]?: string | number;
 };
 
-type ErrorOptions<T extends ErrorType> = Partial<ErrorDefinitions[T]> & {
+type ErrorOptions<T extends ErrorType> = {
+  message?: string;
+  status?: number;
   placeholders?: PlaceholdersForError<T>;
 };
 
