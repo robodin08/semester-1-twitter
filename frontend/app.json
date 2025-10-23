@@ -1,15 +1,15 @@
 {
   "expo": {
-    "scheme": "twittermini",
-    "name": "twitter-mini",
-    "slug": "twitter-mini",
+    "name": "twittermini",
+    "slug": "twittermini",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/images/icon.png",
+    "scheme": "twittermini",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,23 +18,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.dinandw.twittermini"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router"
     ],
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "115892e0-b365-4c3e-bd85-a3caa9ae644c"
-      }
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }

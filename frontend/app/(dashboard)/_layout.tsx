@@ -1,18 +1,18 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
-import GuestOnly from "../../components/auth/GuestOnly";
+import UserOnly from "@/components/auth/UserOnly";
 
 export default function AuthLayout() {
   return (
-    <GuestOnly>
-      <StatusBar value="auto" />
+    <UserOnly>
+      <StatusBar style="auto" />
       <Stack
         screenOptions={{
           headerShown: false,
           animation: "none",
         }}
       />
-    </GuestOnly>
+    </UserOnly>
   );
 }
