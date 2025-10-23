@@ -16,7 +16,6 @@ const errorDefinitions = {
     message: "Message must be between {min} and {max} characters.",
     status: 400,
   },
-  INVALID_AUTH_FORMAT: { message: "Authorization header format is invalid.", status: 400 },
 
   // Already in use
   EMAIL_IN_USE: { message: "Email is already in use.", status: 409 },
@@ -30,7 +29,6 @@ const errorDefinitions = {
     message: "Cannot generate a new access token until the old one is expired.",
     status: 429,
   },
-  MISSING_AUTH_HEADER: { message: "Authorization header is missing.", status: 401 },
   INVALID_ACCESS_TOKEN: { message: "Access token expired or invalid.", status: 401 },
   USER_NOT_FOUND: { message: "User not found.", status: 401 },
 

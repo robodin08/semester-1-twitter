@@ -3,7 +3,7 @@ import express, { Router } from "express";
 import { createUser, loginUser } from "@services/users";
 import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
 import { revokeRefreshToken, refreshAccessToken } from "@utils/sessionTokens";
-import { validateBody, createZodSchema, type SchemaType } from "@utils/bodyValidator";
+import { validateBody, createZodSchema, type SchemaType } from "@utils/schemaValidator";
 
 const router = Router();
 

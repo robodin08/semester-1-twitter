@@ -3,7 +3,7 @@ import z from "zod";
 
 import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
 import { createPost, ratePost } from "@services/posts";
-import { validateBody, createZodSchema, type SchemaType } from "@utils/bodyValidator";
+import { validateBody, createZodSchema, type SchemaType } from "@utils/schemaValidator";
 
 const router = Router();
 

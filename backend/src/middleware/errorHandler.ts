@@ -15,9 +15,9 @@ export function errorHandler(err: RequestError, req: Request, res: Response, nex
 
   res.status(status).json({
     success: false,
-    status: status,
-    description: description,
-    message: message,
-    type: type,
+    status,
+    description,
+    message,
+    type,
   });
 }

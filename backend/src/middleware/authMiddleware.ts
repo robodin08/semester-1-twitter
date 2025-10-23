@@ -1,6 +1,7 @@
 import type { FindOneOptions } from "typeorm";
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 import type core from "express-serve-static-core";
+import { z } from "zod";
 
 import { verifyAccessToken } from "@utils/sessionTokens";
 import { User, userRepository } from "@datasource";
@@ -16,15 +17,38 @@ export interface UserRequest<
   user?: User;
 }
 
+const headerSchema = z.object({
+  authorization: z
+    .string()
+    .trim()
+    .nonempty("Authorization header is required")
+    .refine((val) => /^Bearer\s+[\w-]+\.[\w-]+\.[\w-]+$/.test(val), { error: "Invalid Bearer token format" })
+    .transform((val) => val.split(" ")[1]),
+});
+
+function validateAuthHeader(authorization: any, next: NextFunction): string | void {
+  try {
+    const parsed = headerSchema.parse({ authorization });
+    return parsed.authorization;
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const messages = err.issues.map((issue) => {
+        const path = issue.path.length ? issue.path.join(".") : "input";
+        return `${path}: ${issue.message}`;
+      });
+
+      next(new RequestError("INVALID_VALIDATION", { message: messages.join("; ") }));
+    } else {
+      next(err);
+    }
+  }
+}
+
 export default function isAuthenticated(options?: FindOneOptions<User>): RequestHandler {
   return async (req: UserRequest, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) throw new RequestError("MISSING_AUTH_HEADER");
+    const accessToken = validateAuthHeader(req.headers.authorization, next);
+    if (!accessToken) return;
 
-    const parts = authHeader.split(" ");
-    if (parts.length !== 2 || parts[0] !== "Bearer") throw new RequestError("INVALID_AUTH_FORMAT");
-
-    const accessToken = parts[1];
     const payload = verifyAccessToken(accessToken);
     if (!payload) throw new RequestError("INVALID_ACCESS_TOKEN");
 
