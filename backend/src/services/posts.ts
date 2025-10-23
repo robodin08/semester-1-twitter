@@ -17,11 +17,7 @@ export async function createPost(userId: number, message: string): Promise<Post>
   return post;
 }
 
-export async function ratePost(
-  userId: number,
-  postId: number,
-  action: PostActionType,
-): Promise<PostActionType | null> {
+export async function ratePost(userId: number, postId: number, action: PostActionType): Promise<PostActionType | null> {
   return await AppDataSource.transaction(async (manager) => {
     const postActionRepo = manager.getRepository(PostAction);
     const postRepo = manager.getRepository(Post);

@@ -16,9 +16,7 @@ const fieldValidators = {
   action: z.enum(Object.values(PostActionType)),
 };
 
-export type SchemaType<T extends ReturnType<typeof createZodSchema>> = T extends z.ZodTypeAny
-  ? z.infer<T>
-  : never;
+export type SchemaType<T extends ReturnType<typeof createZodSchema>> = T extends z.ZodTypeAny ? z.infer<T> : never;
 
 export function createZodSchema<T extends readonly (keyof typeof fieldValidators)[]>(...fields: T) {
   const schema = z.strictObject(

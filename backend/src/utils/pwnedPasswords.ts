@@ -48,10 +48,7 @@ async function fetchRange(prefix: string, options: { padding?: boolean } = {}): 
   }
 }
 
-export default async function pwnedCount(
-  password: string,
-  options: { padding?: boolean } = {},
-): Promise<number> {
+export default async function pwnedCount(password: string, options: { padding?: boolean } = {}): Promise<number> {
   if (typeof password !== "string" || !password.trim()) {
     throw new Error("Password must be a non-empty string.");
   }

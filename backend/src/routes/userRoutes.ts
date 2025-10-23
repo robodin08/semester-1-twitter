@@ -12,60 +12,48 @@ router.use(express.json());
 const createUserScheme = createZodSchema("username", "email", "password");
 type CreateUserInput = SchemaType<typeof createUserScheme>;
 
-router.post(
-  "/create",
-  validateBody(createUserScheme),
-  async (req: UserRequest<CreateUserInput>, res) => {
-    const { username, email, password } = req.body;
+router.post("/create", validateBody(createUserScheme), async (req: UserRequest<CreateUserInput>, res) => {
+  const { username, email, password } = req.body;
 
-    const user = await createUser(username, email, password);
+  const user = await createUser(username, email, password);
 
-    console.log(user);
+  console.log(user);
 
-    res.status(200).json({
-      success: true,
-    });
-  },
-);
+  res.status(200).json({
+    success: true,
+  });
+});
 
 const loginUserScheme = createZodSchema("identifier", "password");
 type LoginUserInput = SchemaType<typeof loginUserScheme>;
 
-router.post(
-  "/login",
-  validateBody(loginUserScheme),
-  async (req: UserRequest<LoginUserInput>, res) => {
-    const { identifier, password } = req.body;
+router.post("/login", validateBody(loginUserScheme), async (req: UserRequest<LoginUserInput>, res) => {
+  const { identifier, password } = req.body;
 
-    const { accessToken, refreshToken } = await loginUser(identifier, password);
+  const { accessToken, refreshToken } = await loginUser(identifier, password);
 
-    console.log(req.body);
+  console.log(req.body);
 
-    res.status(200).json({
-      success: true,
-      accessToken,
-      refreshToken,
-    });
-  },
-);
+  res.status(200).json({
+    success: true,
+    accessToken,
+    refreshToken,
+  });
+});
 
 const refreshUserScheme = createZodSchema("refreshToken");
 type RefreshUserInput = SchemaType<typeof refreshUserScheme>;
 
-router.post(
-  "/refresh",
-  validateBody(refreshUserScheme),
-  async (req: UserRequest<RefreshUserInput>, res) => {
-    const { refreshToken } = req.body;
+router.post("/refresh", validateBody(refreshUserScheme), async (req: UserRequest<RefreshUserInput>, res) => {
+  const { refreshToken } = req.body;
 
-    const accessToken = await refreshAccessToken(refreshToken);
+  const accessToken = await refreshAccessToken(refreshToken);
 
-    res.status(200).json({
-      success: true,
-      accessToken,
-    });
-  },
-);
+  res.status(200).json({
+    success: true,
+    accessToken,
+  });
+});
 
 const logoutUserScheme = createZodSchema("refreshToken");
 type LogoutUserInput = SchemaType<typeof logoutUserScheme>;

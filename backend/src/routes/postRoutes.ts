@@ -35,22 +35,17 @@ router.post(
 const ratePostSchema = createZodSchema("postId", "action");
 type RatePostInput = z.infer<typeof ratePostSchema>;
 
-router.post(
-  "/rate",
-  isAuthenticated(),
-  validateBody(ratePostSchema),
-  async (req: UserRequest<RatePostInput>, res) => {
-    if (!req.user) return; // typescript safty
+router.post("/rate", isAuthenticated(), validateBody(ratePostSchema), async (req: UserRequest<RatePostInput>, res) => {
+  if (!req.user) return; // typescript safty
 
-    const { postId, action } = req.body;
+  const { postId, action } = req.body;
 
-    const newState = await ratePost(req.user.id, postId, action);
+  const newState = await ratePost(req.user.id, postId, action);
 
-    res.status(200).json({
-      success: true,
-      newState,
-    });
-  },
-);
+  res.status(200).json({
+    success: true,
+    newState,
+  });
+});
 
 export default router;

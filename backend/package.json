@@ -54,6 +54,6 @@
     "zxcvbn": "^4.4.2"
   },
   "prettier": {
-    "printWidth": 100
+    "printWidth": 120
   }
 }
