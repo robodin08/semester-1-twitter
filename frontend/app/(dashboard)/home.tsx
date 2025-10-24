@@ -8,9 +8,7 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <Text title={true} style={styles.title}>
-        Home
-      </Text>
+      <Text style={styles.title}>Home</Text>
     </View>
   );
 }

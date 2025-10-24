@@ -15,7 +15,7 @@ import {
 import { ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useColor } from "./useTheme";
+import { useColor } from "@/hooks/useTheme";
 import Colors from "@/constants/Colors";
 
 interface ViewProps extends DefaultViewProps {

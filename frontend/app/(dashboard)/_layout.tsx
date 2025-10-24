@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import UserOnly from "@/components/auth/UserOnly";
-import { useColor } from "@/components/useTheme";
+import { useColor } from "@/hooks/useTheme";
 
 export default function AuthLayout() {
   return (

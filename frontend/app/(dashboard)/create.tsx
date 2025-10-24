@@ -5,7 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Text, View, TextInput, Spacer, Button } from "@/components/Themed";
 import { useUser } from "@/hooks/useUser";
-import { useColor } from "@/components/useTheme";
+import { useColor } from "@/hooks/useTheme";
 import Colors from "@/constants/Colors";
 
 export default function Profile() {
