@@ -34,7 +34,7 @@ const config = {
   session: {
     jwtSecret: getEnv("JWT_SECRET"),
     jwtRefreshSecret: getEnv("JWT_REFRESH_SECRET"),
-    accessTokenTTL: ttl(isDevelopment ? "1d" : "15m"),
+    accessTokenTTL: ttl(isDevelopment ? "5m" : "15m"),
     refreshTokenTTL: ttl(isDevelopment ? "30d" : "30d"),
   },
   morgan: isDevelopment ? "dev" : "combined",

@@ -32,8 +32,6 @@ router.post("/login", validateBody(loginUserScheme), async (req: UserRequest<Log
 
   const { accessToken, refreshToken } = await loginUser(identifier, password);
 
-  console.log(req.body);
-
   res.status(200).json({
     success: true,
     accessToken,

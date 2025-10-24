@@ -6,10 +6,10 @@ import { PostActionType } from "@entities/PostAction";
 import RequestError from "@RequestError";
 
 const fieldValidators = {
-  username: z.string().trim().nonempty(),
-  email: z.email().trim(),
+  username: z.string().trim().toLowerCase().nonempty(),
+  email: z.email().trim().toLowerCase(),
   password: z.string().trim().nonempty(),
-  identifier: z.string().trim().nonempty(),
+  identifier: z.string().trim().toLowerCase().nonempty(),
   refreshToken: z.string().trim().nonempty(),
   message: z.string().trim().nonempty(),
   postId: z.int().min(0),

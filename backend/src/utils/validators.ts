@@ -61,7 +61,7 @@ export async function validateEmail(email: string) {
   const [local, domainRaw] = email.split("@");
   const domain = domainRaw?.toLowerCase();
 
-  const isValid = !validator.isEmail(email) || !local || !domain || local.includes("+");
+  const isValid = validator.isEmail(email) && !local.includes("+");
 
   if (!isValid) throw new RequestError("INVALID_EMAIL");
 

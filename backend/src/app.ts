@@ -9,7 +9,7 @@ const app = express();
 app.all("/status", (req, res) =>
   res.status(200).json({
     success: true,
-    statuc: "ok",
+    status: "ok",
   }),
 );
 
