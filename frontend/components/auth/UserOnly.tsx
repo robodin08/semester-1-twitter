@@ -1,10 +1,12 @@
 import { useEffect, ReactNode } from "react";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 import { useUser } from "@/hooks/useUser";
 import { Loader } from "../Themed";
 
 export default function UserOnly({ children }: { children: ReactNode }) {
+  const router = useRouter();
+
   const { user, authChecked } = useUser();
 
   useEffect(() => {

@@ -1,108 +1,102 @@
 import * as Storage from "./storage";
+import fetchApi, { ApiRespone, redirectToLogin, SuccessResponse } from "./api";
+import { User } from "@/contexts/UserContext";
 
-const port = 3000;
-
-async function getApiUrl() {
-  const res = await fetch("https://api.ipify.org?format=json");
-  const data = await res.json();
-  return `http://${data.ip}:${port}`;
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
 }
 
-async function fetchApi(path: string, authenticated: boolean, body?: any) {
-  const apiUrl = await getApiUrl();
-
-  const res = await fetch(apiUrl + path, {
+export async function login(
+  identifier: string,
+  password: string
+): Promise<ApiRespone<LoginResponse> | void> {
+  const data = await fetchApi<LoginResponse>("/user/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+    body: {
+      identifier,
+      password,
     },
-    body: JSON.stringify(body),
   });
 
-  
+  if (!data) return;
+
+  if (data.success) {
+    await Storage.set("accessToken", data.accessToken);
+    await Storage.set("refreshToken", data.refreshToken);
+  }
+
+  return data;
 }
 
-export async function login(identifier: string, password: string): Promise<string | void> {
-  try {
-    const API_URL = await getApiUrl();
-    const response = await fetch(`${API_URL}/user/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ identifier, password }),
-    });
+export async function register(
+  username: string,
+  email: string,
+  password: string
+): Promise<ApiRespone | void> {
+  const data = await fetchApi("/user/create", {
+    method: "POST",
+    body: {
+      username,
+      email,
+      password,
+    },
+  });
 
-    const data = await response.json();
-
-    if (data.message === "Invalid credentials.") {
-      return "Incorrect identifier or password";
-    }
-
-    const ok1 = await Storage.set("accessToken", data.accessToken);
-    const ok2 = await Storage.set("refreshToken", data.refreshToken);
-
-    if (!ok1 || !ok2) {
-      return "An error occurred while logging in.";
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    return "Network or server error.";
-  }
+  return data;
 }
 
-export async function logout() {
-  try {
-    const API_URL = await getApiUrl();
-
-    const accessToken = await Storage.get("accessToken");
-    const refreshToken = await Storage.get("refreshToken");
-    if (!accessToken || !refreshToken) return null;
-
-    const response = await fetch(`${API_URL}/user/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        refreshToken,
-      }),
-    });
-
-    const data = await response.json();
-    console.log(data);
-    if (!data.success) return;
-
-    await Storage.remove("accessToken");
-    await Storage.remove("refreshToken");
-  } catch (error) {
-    console.error("Login error:", error);
-    return "Network or server error.";
+export async function logout(): Promise<boolean> {
+  const refreshToken = await Storage.get("refreshToken");
+  if (!refreshToken) {
+    await redirectToLogin();
+    return false;
   }
+
+  const data = await fetchApi("/user/logout", {
+    method: "POST",
+    authenticate: true,
+    body: {
+      refreshToken,
+    },
+  });
+
+  if (!data?.success) return false;
+
+  await Storage.remove("accessToken");
+  await Storage.remove("refreshToken");
+
+  return true;
 }
 
-export async function getUserInfo() {
-  try {
-    const API_URL = await getApiUrl();
+interface UserInfoResponse {
+  user: User;
+}
 
-    const accessToken = await Storage.get("accessToken");
-    if (!accessToken) return null;
+export async function getUserInfo(): Promise<SuccessResponse<UserInfoResponse> | null> {
+  const data = await fetchApi<UserInfoResponse>("/user/info", {
+    method: "POST",
+    authenticate: true,
+  });
 
-    const response = await fetch(`${API_URL}/user/info`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
+  if (!data?.success) return null;
 
-    const data = await response.json();
+  return data;
+}
 
-    if (!data.success || !data.user) return null;
-    return data.user;
-  } catch (error) {
-    console.error("getUserInfo error:", error);
-    return null;
-  }
+interface CreatePostResponse {
+  id: string;
+}
+
+export async function createPost(message: string): Promise<ApiRespone<CreatePostResponse> | void> {
+  const data = await fetchApi<CreatePostResponse>("/post/create", {
+    authenticate: true,
+    body: {
+      message,
+    },
+  });
+
+  if (!data) return;
+
+  return data;
 }

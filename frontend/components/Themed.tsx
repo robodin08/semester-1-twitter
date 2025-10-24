@@ -1,8 +1,8 @@
 import {
-  Text as DefaultText,
-  TextProps as DefaultTextProps,
   View as DefaultView,
   ViewProps as DefaultViewProps,
+  Text as DefaultText,
+  TextProps as DefaultTextProps,
   TextInput as DefaultTextInput,
   TextInputProps as DefaultTextInputProps,
   Pressable as DefaultPressable,
@@ -15,19 +15,18 @@ import {
 import { ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useColor, Theme } from "./useTheme";
-import { Colors } from "@/constants/Colors";
+import { useColor } from "./useTheme";
+import Colors from "@/constants/Colors";
 
 interface ViewProps extends DefaultViewProps {
   safe?: boolean;
-  theme?: Theme;
 }
 
-export function View({ style, safe = false, theme, ...props }: ViewProps) {
+export function View({ style, safe = false, ...props }: ViewProps) {
   const insets = useSafeAreaInsets();
 
   const baseStyle = {
-    backgroundColor: useColor("background", theme),
+    backgroundColor: useColor("background"),
     ...(safe && {
       paddingTop: insets.top,
       paddingBottom: insets.bottom,
@@ -37,28 +36,17 @@ export function View({ style, safe = false, theme, ...props }: ViewProps) {
   return <DefaultView style={[baseStyle, style]} {...props} />;
 }
 
-interface TextProps extends DefaultTextProps {
-  title?: boolean;
-  theme?: Theme;
+export function Text({ style, ...props }: DefaultTextProps) {
+  return <DefaultText style={[{ color: useColor("text") }, style]} {...props} />;
 }
 
-export function Text({ style, title = false, theme, ...props }: TextProps) {
-  const textColor = useColor(title ? "title" : "text", theme);
-
-  return <DefaultText style={[{ color: textColor }, style]} {...props} />;
-}
-
-interface TextInputProps extends DefaultTextInputProps {
-  theme?: Theme;
-}
-
-export function TextInput({ style, theme, ...props }: TextInputProps) {
+export function TextInput({ style, ...props }: DefaultTextInputProps) {
   return (
     <DefaultTextInput
       style={[
         {
-          backgroundColor: useColor("uiBackground", theme),
-          color: useColor("text", theme),
+          backgroundColor: useColor("uiBackground"),
+          color: useColor("text"),
           padding: 20,
           borderRadius: 6,
         },
@@ -93,11 +81,7 @@ export function Button({ style, disabled, ...props }: ButtonProps) {
   );
 }
 
-interface LoaderProps extends DefaultViewProps {
-  theme?: Theme;
-}
-
-export function Loader({ style, theme, ...props }: LoaderProps) {
+export function Loader({ style, ...props }: DefaultViewProps) {
   return (
     <View
       style={[
@@ -108,13 +92,8 @@ export function Loader({ style, theme, ...props }: LoaderProps) {
         },
         style,
       ]}
-      theme={theme}
     >
-      <ActivityIndicator
-        size="large"
-        color={useColor("text", theme)}
-        {...props}
-      />
+      <ActivityIndicator size="large" color={useColor("text")} {...props} />
     </View>
   );
 }
@@ -124,11 +103,6 @@ interface SpacerProps extends DefaultViewProps {
   height?: FlexStyle["height"];
 }
 
-export function Spacer({
-  width = "100%",
-  height = 40,
-  style,
-  ...props
-}: SpacerProps) {
+export function Spacer({ width = "100%", height = 40, style, ...props }: SpacerProps) {
   return <View style={[{ width, height }, style]} {...props} />;
 }

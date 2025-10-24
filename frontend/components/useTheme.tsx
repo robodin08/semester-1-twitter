@@ -1,18 +1,15 @@
 import { useColorScheme } from "react-native";
-import Colors from "@/constants/Colors";
+import { ThemeColors } from "@/constants/Colors";
 
-export type Theme = keyof typeof Colors;
+export type Theme = keyof typeof ThemeColors;
 
 export function useThemeColors(overrideTheme?: Theme) {
   const systemTheme = useColorScheme();
   const theme: Theme = overrideTheme ?? systemTheme ?? "light";
-  return Colors[theme];
+  return ThemeColors[theme];
 }
 
-export function useColor(
-  key: keyof (typeof Colors)["light"],
-  overrideTheme?: Theme
-) {
+export function useColor(key: keyof (typeof ThemeColors)["light"], overrideTheme?: Theme) {
   const colors = useThemeColors(overrideTheme);
   return colors[key];
 }
