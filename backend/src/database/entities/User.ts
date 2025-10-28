@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, OneToMany } f
 import { Session } from "@entities/Session";
 import { Post } from "@entities/Post";
 import { PostAction } from "@entities/PostAction";
+import { RequestLog } from "@datasource";
 
 @Entity()
 export class User {
@@ -23,8 +24,11 @@ export class User {
   @OneToMany(() => Post, (post) => post.user)
   posts?: Post[];
 
-  @OneToMany(() => PostAction, (postActions) => postActions.user)
+  @OneToMany(() => PostAction, (postAction) => postAction.user)
   postActions?: PostAction[];
+
+  @OneToMany(() => RequestLog, (requestLog) => requestLog.user)
+  requests?: PostAction[];
 
   @CreateDateColumn({ type: "timestamp", precision: 0 })
   createdAt!: Date;

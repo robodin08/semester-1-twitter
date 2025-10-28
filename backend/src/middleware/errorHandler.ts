@@ -13,6 +13,8 @@ export function errorHandler(err: RequestError, req: Request, res: Response, nex
 
   const { status, description, message, type } = err;
 
+  res.locals.errorType = type;
+
   res.status(status).json({
     success: false,
     status,

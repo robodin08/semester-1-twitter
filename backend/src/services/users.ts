@@ -9,11 +9,7 @@ import config from "@config";
 
 const bcryptSaltRounds = config.isDevelopment ? 5 : 15;
 
-export async function createUser(
-  username: string,
-  email: string,
-  password: string,
-): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+export async function createUser(username: string, email: string, password: string): Promise<User> {
   validateUsername(username);
   await validatePassword(password);
   await validateEmail(email);
@@ -36,9 +32,7 @@ export async function createUser(
     password: hashedPassword,
   });
 
-  const { accessToken, refreshToken } = await generateTokens(user.id);
-
-  return { user, accessToken, refreshToken };
+  return user;
 }
 
 export async function loginUser(

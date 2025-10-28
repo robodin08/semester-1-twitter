@@ -4,10 +4,13 @@ import { createUser, loginUser } from "@services/users";
 import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
 import { revokeRefreshToken, refreshAccessToken } from "@utils/sessionTokens";
 import { validateBody, createZodSchema, type SchemaType } from "@utils/schemaValidator";
+import requestLogger from "@middleware/requestLogger";
 
 const router = Router();
 
 router.use(express.json());
+
+router.use(requestLogger);
 
 const createUserScheme = createZodSchema("username", "email", "password");
 type CreateUserInput = SchemaType<typeof createUserScheme>;
@@ -16,8 +19,6 @@ router.post("/create", validateBody(createUserScheme), async (req: UserRequest<C
   const { username, email, password } = req.body;
 
   const user = await createUser(username, email, password);
-
-  console.log(user);
 
   res.status(200).json({
     success: true,

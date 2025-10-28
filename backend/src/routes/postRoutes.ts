@@ -4,10 +4,17 @@ import z from "zod";
 import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
 import { createPost, ratePost } from "@services/posts";
 import { validateBody, createZodSchema, type SchemaType } from "@utils/schemaValidator";
+import requestLogger from "@middleware/requestLogger";
 
 const router = Router();
 
 router.use(express.json());
+
+router.use(requestLogger);
+
+router.post("/test", isAuthenticated(), (req, res) => {
+  res.json("yo test");
+});
 
 const createPostSchema = createZodSchema("message");
 type CreatePostInput = SchemaType<typeof createPostSchema>;
