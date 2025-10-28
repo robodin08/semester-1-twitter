@@ -12,10 +12,6 @@ router.use(express.json());
 
 router.use(requestLogger);
 
-router.post("/test", isAuthenticated(), (req, res) => {
-  res.json("yo test");
-});
-
 const createPostSchema = createZodSchema("message");
 type CreatePostInput = SchemaType<typeof createPostSchema>;
 
