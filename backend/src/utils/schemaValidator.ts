@@ -14,6 +14,7 @@ const fieldValidators = {
   message: z.string().trim().nonempty(),
   postId: z.int().min(0),
   action: z.enum(Object.values(PostActionType)),
+  postOffset: z.int().min(0),
 };
 
 export type SchemaType<T extends ReturnType<typeof createZodSchema>> = T extends z.ZodTypeAny ? z.infer<T> : never;
@@ -30,7 +31,6 @@ export function createZodSchema<T extends readonly (keyof typeof fieldValidators
 export function validateBody<T extends z.ZodTypeAny>(schema: T) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
       req.body = schema.parse(req.body);
       next();
     } catch (err) {

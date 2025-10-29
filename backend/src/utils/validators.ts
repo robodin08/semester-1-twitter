@@ -1,6 +1,9 @@
+import fs from "node:fs/promises";
 import validator from "validator";
 import zxcvbn from "zxcvbn";
-import fs from "node:fs/promises";
+import { Filter } from "content-checker";
+
+const textFilter = new Filter();
 
 import pwnedCount from "@utils/pwnedPasswords";
 import RequestError from "@RequestError";
@@ -69,4 +72,11 @@ export async function validateEmail(email: string) {
   if (disposableSet?.has(domain)) {
     throw new RequestError("UNSAFE_EMAIL");
   }
+}
+
+export function validateMessage(message: string) {
+  if (!validator.isLength(message, { min: 5, max: 500 }))
+    throw new RequestError("INVALID_MESSAGE_LENGTH", { placeholders: { min: 5, max: 500 } });
+
+  if (textFilter.isProfane(message)) throw new RequestError("UNSAFE_MESSAGE");
 }

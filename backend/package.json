@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "content-checker": "^1.1.3",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",

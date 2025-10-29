@@ -1,8 +1,8 @@
 import express, { Router, type Response } from "express";
-import z from "zod";
+import z, { success } from "zod";
 
 import isAuthenticated, { type UserRequest } from "@middleware/authMiddleware";
-import { createPost, ratePost } from "@services/posts";
+import { createPost, getPosts, randomizePostCreatedAt, ratePost } from "@services/posts";
 import { validateBody, createZodSchema, type SchemaType } from "@utils/schemaValidator";
 import requestLogger from "@middleware/requestLogger";
 
@@ -48,6 +48,35 @@ router.post("/rate", isAuthenticated(), validateBody(ratePostSchema), async (req
   res.status(200).json({
     success: true,
     newState,
+  });
+});
+
+const getPostSchema = createZodSchema("postOffset");
+type GetPostInput = z.infer<typeof getPostSchema>;
+
+router.post(
+  "/get",
+  isAuthenticated(),
+  validateBody(getPostSchema),
+  async (req: UserRequest<GetPostInput>, res: Response) => {
+    if (!req.user) return; // typescript safty
+
+    const { postOffset } = req.body;
+
+    const posts = await getPosts(req.user.id, postOffset);
+
+    res.status(200).json({
+      success: true,
+      posts,
+    });
+  },
+);
+
+router.post("/randomizePosts", async (req, res) => {
+  // only in dev
+  await randomizePostCreatedAt();
+  res.status(200).json({
+    success: true,
   });
 });
 

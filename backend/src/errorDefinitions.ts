@@ -16,6 +16,10 @@ const errorDefinitions = {
     message: "Message must be between {min} and {max} characters.",
     status: 400,
   },
+  UNSAFE_MESSAGE: {
+    message: "Message contains inappropriate or unsafe language.",
+    status: 400,
+  },
 
   // Already in use
   EMAIL_IN_USE: { message: "Email is already in use.", status: 409 },

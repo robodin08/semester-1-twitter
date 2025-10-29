@@ -7,6 +7,7 @@ export function notFoundHandler(req: Request, res: Response, next: NextFunction)
 }
 
 export function errorHandler(err: RequestError, req: Request, res: Response, next: NextFunction) {
+  console.error(err);
   if (!(err instanceof RequestError)) {
     err = new RequestError("INTERNAL_SERVER_ERROR");
   }
