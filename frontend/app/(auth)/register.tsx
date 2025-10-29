@@ -5,7 +5,7 @@ import { Link } from "expo-router";
 import { Text, TextInput, View, Spacer, Button } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { useUser } from "@/hooks/useUser";
-import { validateEmail, validatePassword, validateUsername } from "@/uitls/validate";
+import { validateEmail, validatePassword, validateUsername } from "@/utils/validate";
 
 export default function Login() {
   const [username, setUsername] = useState("");

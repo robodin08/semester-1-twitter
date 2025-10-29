@@ -1,6 +1,6 @@
 import * as Storage from "./storage";
 import fetchApi, { ApiRespone, redirectToLogin, SuccessResponse } from "./api";
-import { User } from "@/contexts/UserContext";
+import { Post, User } from "@/contexts/UserContext";
 
 interface LoginResponse {
   accessToken: string;
@@ -85,7 +85,7 @@ export async function getUserInfo(): Promise<SuccessResponse<UserInfoResponse> |
 }
 
 interface CreatePostResponse {
-  id: string;
+  id: number;
 }
 
 export async function createPost(message: string): Promise<ApiRespone<CreatePostResponse> | void> {
@@ -99,4 +99,29 @@ export async function createPost(message: string): Promise<ApiRespone<CreatePost
   if (!data) return;
 
   return data;
+}
+
+interface GetPostResponse {
+  posts: Post[];
+}
+
+export async function getPosts(offset: number): Promise<ApiRespone<GetPostResponse> | void> {
+  const data = await fetchApi<GetPostResponse>("/post/get", {
+    authenticate: true,
+    body: {
+      postOffset: offset,
+    },
+  });
+
+  if (!data) return;
+
+  return {
+    ...data,
+    ...(data.success && {
+      posts: data.posts.map((post) => ({
+        ...post,
+        createAt: new Date(post.createdAt),
+      })),
+    }),
+  };
 }

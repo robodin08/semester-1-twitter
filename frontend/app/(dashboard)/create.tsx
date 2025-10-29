@@ -31,9 +31,9 @@ export default function Profile() {
     const res = await createPost(message);
     if (res !== "SUCCESS") {
       setError(res); // translate to readable error
+    } else {
+      router.navigate("/home");
     }
-
-    router.navigate("/home");
 
     setIsCreating(false);
   }

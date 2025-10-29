@@ -17,13 +17,13 @@ export default function Login() {
   async function handleLogin() {
     setError(null);
     setIsLoggingIn(true);
+
     const res = await login(identifier, password);
-    if (res === "SUCCESS") {
-      setIsLoggingIn(false);
-      return;
+
+    if (res !== "SUCCESS") {
+      setError(res); // translate to readable error
     }
 
-    setError(res); // translate to readable error
     setIsLoggingIn(false);
   }
 

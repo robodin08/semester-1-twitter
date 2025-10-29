@@ -2,8 +2,6 @@ import { router } from "expo-router";
 
 import * as Storage from "@/services/storage";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const port = 3000;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
@@ -31,9 +29,10 @@ export type ApiRespone<T = {}> = SuccessResponse<T> | ErrorResponse;
 
 let apiUrl: string | null;
 async function fetchApiUrl(): Promise<string> {
-  const res = await fetch("https://api.ipify.org?format=json");
-  const data = await res.json();
-  return `http://${data.ip}:${port}`;
+  //   const res = await fetch("https://api.ipify.org?format=json");
+  //   const data = await res.json();
+  //   return `http://${data.ip}:${port}`;
+  return `http://10.89.98.111:${port}`;
 }
 
 async function getApiUrl(): Promise<string> {
@@ -56,6 +55,7 @@ async function refreshToken(): Promise<true | void> {
     { body: { refreshToken } },
     false
   );
+
   if (!data?.success) return await redirectToLogin();
 
   await Storage.set("accessToken", data.accessToken);
@@ -114,7 +114,7 @@ export default async function fetchApi<T>(
   if (type === "INVALID_VALIDATION") throw new Error(`Developer error: ${message}`);
   if (type === "INVALID_ACCESS_TOKEN" && authenticate && retry) {
     console.log(`[API] ↻ ${path} | Invalid token, refreshing...`);
-    if (await refreshToken()) return;
+    if (!(await refreshToken())) return;
     return fetchApi(path, options, false);
   }
 

@@ -14,11 +14,12 @@ import {
 
 import { ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { PostCard } from "@/components/PostCard";
 
 import { useColor } from "@/hooks/useTheme";
 import Colors from "@/constants/Colors";
 
-interface ViewProps extends DefaultViewProps {
+export interface ViewProps extends DefaultViewProps {
   safe?: boolean;
 }
 
@@ -81,7 +82,7 @@ export function Button({ style, disabled, ...props }: ButtonProps) {
   );
 }
 
-export function Loader({ style, ...props }: DefaultViewProps) {
+export function Loader({ style, ...props }: ViewProps) {
   return (
     <View
       style={[
@@ -98,7 +99,7 @@ export function Loader({ style, ...props }: DefaultViewProps) {
   );
 }
 
-interface SpacerProps extends DefaultViewProps {
+interface SpacerProps extends ViewProps {
   width?: FlexStyle["width"];
   height?: FlexStyle["height"];
 }

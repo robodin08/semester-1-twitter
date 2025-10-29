@@ -7,6 +7,19 @@ export interface User {
   username: string;
 }
 
+export enum PostActionType {
+  BOOST = "BOOST",
+  DISLIKE = "DISLIKE",
+}
+
+export interface Post {
+  id: number;
+  message: string;
+  boostCount: number;
+  userAction: PostActionType | null,
+  createdAt: Date;
+}
+
 interface UserContextType {
   authChecked: boolean;
   user: User | null;
@@ -15,6 +28,7 @@ interface UserContextType {
   logout: () => Promise<void>;
 
   createPost: (message: string) => Promise<string>;
+  getPosts: (offset: number) => Promise<Post[] | string>;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -57,6 +71,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return "SUCCESS";
   }
 
+  async function getPosts(offset: number): Promise<Post[] | string> {
+    const res = await userService.getPosts(offset);
+    if (!res?.success) return res?.type || "UNKOWN_ERROR";
+
+    return res.posts;
+  }
+
   async function getInitialUserValue() {
     try {
       const data = await userService.getUserInfo();
@@ -77,7 +98,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, authChecked, login, register, logout, createPost }}>
+    <UserContext.Provider
+      value={{ user, authChecked, login, register, logout, createPost, getPosts }}
+    >
       {children}
     </UserContext.Provider>
   );
