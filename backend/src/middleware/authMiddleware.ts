@@ -26,7 +26,7 @@ const headerSchema = z.object({
     .transform((val) => val.split(" ")[1]),
 });
 
-function validateAuthHeader(authorization: any, next: NextFunction): string | void {
+function validateAuthHeader(authorization: string | undefined, next: NextFunction): string | void {
   try {
     const parsed = headerSchema.parse({ authorization });
     return parsed.authorization;

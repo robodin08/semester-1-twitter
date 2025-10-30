@@ -21,6 +21,18 @@ const errorDefinitions = {
     status: 400,
   },
 
+  // Rate limiting
+  RATE_LIMIT_EXCEEDED: {
+    message: "You are sending too many requests. Please slow down and try again later.",
+    status: 429,
+  },
+
+  // Dev-only / local access
+  DEV_ONLY_ACCESS: {
+    message: "This endpoint is only accessible from the local machine in development mode.",
+    status: 403,
+  },
+
   // Already in use
   EMAIL_IN_USE: { message: "Email is already in use.", status: 409 },
   USERNAME_IN_USE: { message: "Username is already in use.", status: 409 },
