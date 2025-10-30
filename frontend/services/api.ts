@@ -29,10 +29,9 @@ export type ApiRespone<T = {}> = SuccessResponse<T> | ErrorResponse;
 
 let apiUrl: string | null;
 async function fetchApiUrl(): Promise<string> {
-  //   const res = await fetch("https://api.ipify.org?format=json");
-  //   const data = await res.json();
-  //   return `http://${data.ip}:${port}`;
-  return `http://10.89.98.111:${port}`;
+  const res = await fetch("https://api.ipify.org?format=json");
+  const data = await res.json();
+  return `http://${data.ip}:${port}`;
 }
 
 async function getApiUrl(): Promise<string> {
