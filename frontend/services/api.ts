@@ -2,6 +2,8 @@ import { router } from "expo-router";
 
 import * as Storage from "@/services/storage";
 
+const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 const port = 3000;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
@@ -114,6 +116,14 @@ export default async function fetchApi<T>(
   if (type === "INVALID_ACCESS_TOKEN" && authenticate && retry) {
     console.log(`[API] ↻ ${path} | Invalid token, refreshing...`);
     if (!(await refreshToken())) return;
+    return fetchApi(path, options, false);
+  }
+  if (type === "RATE_LIMIT_EXCEEDED") {
+    const retryAfterHeader = res.headers.get("retry-after");
+    const retryAfter = retryAfterHeader ? parseInt(retryAfterHeader, 10) : 3;
+
+    await delay(retryAfter * 1000);
+
     return fetchApi(path, options, false);
   }
 
